@@ -110,17 +110,18 @@ USER openclaw
 RUN NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" || true
 
 # Install nvm, Node.js LTS, pnpm, and openclaw
-RUN export SHELL=/bin/bash  && export NVM_DIR="$HOME/.nvm" \
-  && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
-  && . "$NVM_DIR/nvm.sh" \
-  && nvm install --lts \
-  && nvm use --lts \
-  && nvm alias default lts/* \
-  && npm install -g pnpm \
-  && pnpm setup \
-  && export PNPM_HOME="/home/openclaw/.local/share/pnpm" \
-  && export PATH="$PNPM_HOME:$PATH" \
-  && pnpm add -g "openclaw@${OPENCLAW_VERSION}"
+RUN export SHELL=/bin/bash && export NVM_DIR="$HOME/.nvm" \
+ && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
+ && . "$NVM_DIR/nvm.sh" \
+ && nvm install --lts \
+ && nvm use --lts \
+ && nvm alias default lts/* \
+ && npm install -g pnpm \
+ && export PNPM_HOME="/home/openclaw/.local/share/pnpm" \
+ && mkdir -p "$PNPM_HOME/bin" \
+ && export PATH="$PNPM_HOME/bin:$PATH" \
+ && pnpm config set global-bin-dir "$PNPM_HOME/bin" \
+ && pnpm add -g "openclaw@${OPENCLAW_VERSION}"
 
 # Switch back to root for final setup
 USER root
